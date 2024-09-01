@@ -1,3 +1,4 @@
+import MenuHeader from './(components)/MenuHeader';
 import styles from './styles.module.scss';
 
 type RootLayoutProps = { children: React.ReactNode };
@@ -32,7 +33,10 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
         <meta property="og:description" content="Juice Hub: Compre sucos online com facilidade e rapidez." />
       </header>
       <body className={styles.screen}>
-        <AppProvider>{children}</AppProvider>
+        <AppProvider>
+          <MenuHeader />
+          {children}
+        </AppProvider>
       </body>
     </html>
   );
