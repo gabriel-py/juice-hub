@@ -33,7 +33,7 @@ model Pedido {
   local_id     Int
   created_at   DateTime     @default(now())
   scheduled_to DateTime
-  rastrear     Boolean
+  rastrear     String
   user         User         @relation(fields: [user_id], references: [id])
   local        Local        @relation(fields: [local_id], references: [id])
   sabores      PedidoSabor[]
