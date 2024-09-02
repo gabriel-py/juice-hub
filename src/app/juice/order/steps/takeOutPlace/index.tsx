@@ -16,7 +16,7 @@ export default function TakeOut({ control, isLoading }: TakeOutProps) {
     useEffect(() => {
         async function fetchPlaces() {
             try {
-                const response = await fetch('http://localhost:3000/api/places');
+                const response = await fetch('/api/places');
                 if (!response.ok) {
                     throw new Error('Failed to fetch places');
                 }

@@ -21,7 +21,7 @@ export default function Flavors({ control, onNextStep }: FlavorsProps) {
     useEffect(() => {
         const fetchFlavors = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/flavors');
+                const response = await fetch('/api/flavors');
                 const data = await response.json();
                 setFlavors(data);
             } catch (error) {
