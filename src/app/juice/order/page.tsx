@@ -28,8 +28,10 @@ interface Step {
 export default function Order() {
     const [currentStepID, setCurrentStepID] = useState(1);
     const [currentStep, setCurrentStep] = useState<Step>();
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
-    const { control, handleSubmit, formState: { errors, isValid }, watch } = useForm<NewOrderFormData>({
+    const { control, handleSubmit, formState: { errors, isValid } } = useForm<NewOrderFormData>({
         mode: 'onChange',
         defaultValues: {
             name: '',
@@ -46,14 +48,14 @@ export default function Order() {
 
     const onNextStep = () => {
         const next = currentStepID + 1;
-        if(next > maxSteps){
+        if (next > maxSteps) {
             return;
         }
         setCurrentStepID(next);
-    }
+    };
 
     const onSubmit = async (data: NewOrderFormData) => {
-        const router = useRouter();
+        setLoading(true);
 
         try {
             const response = await fetch('http://localhost:3000/api/order', {
@@ -74,6 +76,8 @@ export default function Order() {
             router.push('/juice/order/received');
         } catch (error) {
             console.error('Error submitting order:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -91,9 +95,9 @@ export default function Order() {
         {
             step: 3,
             pageTitle: 'Local de retirada',
-            component: <TakeOut control={control} />
+            component: <TakeOut control={control} isLoading={loading} />
         },
-    ]
+    ];
 
     useEffect(() => {
         const targetStep = steps?.find((step) => step.step === currentStepID);

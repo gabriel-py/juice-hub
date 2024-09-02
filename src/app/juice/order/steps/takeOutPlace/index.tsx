@@ -6,9 +6,10 @@ import { NewOrderFormData } from '../../page';
 
 export interface TakeOutProps {
     control: Control<NewOrderFormData, any>;
+    isLoading: boolean;
 }
 
-export default function TakeOut({ control }: TakeOutProps) {
+export default function TakeOut({ control, isLoading }: TakeOutProps) {
     const [placesOptions, setPlacesOptions] = useState<{ id: number; label: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -125,7 +126,7 @@ export default function TakeOut({ control }: TakeOutProps) {
                 />
             </div>
 
-            <button type='submit' className={styles.nextStepButton} style={{ marginTop: "16px" }}>Finalizar pedido</button>
+            <button type='submit' className={styles.nextStepButton} style={{ marginTop: "16px" }}>{isLoading ? 'Carregando...' : 'Finalizar pedido'}</button>
         </div>
     );
 }
