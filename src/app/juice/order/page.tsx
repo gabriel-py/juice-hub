@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import styles from './styles.module.scss';
 import { useForm } from 'react-hook-form';
 import BasicData from './steps/basicData';
@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import Flavors from './steps/flavors';
 import TakeOut from './steps/takeOutPlace';
 import ProgressBar from '../(components)/ProgressBar';
+import { useRouter } from 'next/navigation';
 
 export interface NewOrderFormData {
     name: string;
@@ -14,6 +15,8 @@ export interface NewOrderFormData {
     phone_number: string;
     takeOutLocal: number;
     flavors: number[];
+    scheduledDate: string;
+    scheduledTime: string;
 }
 
 interface Step {
@@ -34,6 +37,8 @@ export default function Order() {
             phone_number: '',
             takeOutLocal: 0,
             flavors: [],
+            scheduledDate: '',
+            scheduledTime: '',
         },
     });
 
@@ -47,9 +52,29 @@ export default function Order() {
         setCurrentStepID(next);
     }
 
-    const onSubmit = (data: NewOrderFormData) => {
-        console.log(data)
-        // dispatch(createUser(data));
+    const onSubmit = async (data: NewOrderFormData) => {
+        const router = useRouter();
+
+        try {
+            const response = await fetch('http://localhost:3000/api/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit the order');
+            }
+
+            const result = await response.json();
+            console.log('Order submitted successfully:', result);
+
+            router.push('/juice/order/received');
+        } catch (error) {
+            console.error('Error submitting order:', error);
+        }
     };
 
     const steps: Step[] = [
@@ -71,14 +96,14 @@ export default function Order() {
     ]
 
     useEffect(() => {
-        const targetStep = steps?.find((step)=> step.step == currentStepID)
-        if(targetStep){
+        const targetStep = steps?.find((step) => step.step === currentStepID);
+        if (targetStep) {
             setCurrentStep(targetStep);
         }
     }, [currentStepID]);
 
-    if(!currentStep){
-        return;
+    if (!currentStep) {
+        return null;
     }
 
     return (

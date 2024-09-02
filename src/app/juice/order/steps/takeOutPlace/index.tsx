@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Control, Controller, useForm } from 'react-hook-form';
 import styles from './styles.module.scss';
-import { Control, Controller } from 'react-hook-form';
 import { NewOrderFormData } from '../../page';
 
 export interface TakeOutProps {
@@ -33,6 +33,32 @@ export default function TakeOut({ control }: TakeOutProps) {
 
     if (loading) return <p>Loading...</p>;
 
+    const validateDateAndTime = (dateValue: string, timeValue: string) => {
+        const now = new Date();
+        const offset = -3 * 60 * 60 * 1000;
+        const nowInSaoPaulo = new Date(now.getTime() + offset);
+        const nowDate = new Date(nowInSaoPaulo.toDateString());
+
+        if (!dateValue || !timeValue) {
+            return true;
+        }
+
+        const selectedDate = new Date(dateValue);
+        const selectedDateTime = new Date(`${dateValue}T${timeValue}`);
+        const selectedDateInSaoPaulo = new Date(selectedDate.getTime() + offset);
+        const selectedDateTimeInSaoPaulo = new Date(selectedDateTime.getTime() + offset);
+
+        if (selectedDateInSaoPaulo < nowDate) {
+            return 'A data deve ser hoje ou no futuro';
+        }
+
+        if (selectedDateInSaoPaulo.getTime() === nowDate.getTime() && selectedDateTimeInSaoPaulo.getTime() < nowInSaoPaulo.getTime()) {
+            return 'O horário deve ser agora ou no futuro';
+        }
+
+        return true;
+    };
+
     return (
         <div className={styles.container}>
             <span className={styles.containerTitle}>Selecione o local em que deseja fazer a retirada do suco: </span>
@@ -58,6 +84,47 @@ export default function TakeOut({ control }: TakeOutProps) {
                     )}
                 />
             </div>
+
+            <span className={styles.containerTitle}>Selecione o dia e horário para a retirada:</span>
+            <div className={styles.dateTimeInputArea}>
+                <Controller
+                    name="scheduledDate"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                        validate: (value) => validateDateAndTime(value, 'date'),
+                    }}
+                    render={({ field, fieldState }) => (
+                        <div className={styles.inputSection}>
+                            <input
+                                type="date"
+                                {...field}
+                                className={styles.input}
+                            />
+                            {fieldState.error && <p className={styles.error}>{fieldState.error.message}</p>}
+                        </div>
+                    )}
+                />
+                <Controller
+                    name="scheduledTime"
+                    control={control}
+                    defaultValue=""
+                    rules={{
+                        validate: (value) => validateDateAndTime(value, 'time'),
+                    }}
+                    render={({ field, fieldState }) => (
+                        <div className={styles.inputSection}>
+                            <input
+                                type="time"
+                                {...field}
+                                className={styles.input}
+                            />
+                            {fieldState.error && <p className={styles.error}>{fieldState.error.message}</p>}
+                        </div>
+                    )}
+                />
+            </div>
+
             <button type='submit' className={styles.nextStepButton} style={{ marginTop: "16px" }}>Finalizar pedido</button>
         </div>
     );

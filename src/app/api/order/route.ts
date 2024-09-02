@@ -1,20 +1,16 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
-    }
-
-    const { name, email, phone_number, takeOutLocal, flavors } = req.body;
-
-    if (!name || !email || !phone_number || !takeOutLocal || !flavors || !Array.isArray(flavors)) {
-        return res.status(400).json({ message: 'Invalid request data' });
-    }
-
+export async function POST(req: NextRequest) {
     try {
+        const { name, email, phone_number, takeOutLocal, flavors, scheduledDate, scheduledTime } = await req.json();
+
+        if (!name || !email || !phone_number || !takeOutLocal || !flavors || !Array.isArray(flavors) || !scheduledDate || !scheduledTime) {
+            return NextResponse.json({ message: 'Invalid request data' }, { status: 400 });
+        }
+
         // Find or create the user
         let user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
@@ -27,12 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
         }
 
+        const scheduledTo = new Date(`${scheduledDate}T${scheduledTime}:00.000Z`);
+
         // Create the order
         const newOrder = await prisma.pedido.create({
             data: {
                 user_id: user.id,
                 local_id: takeOutLocal,
-                scheduled_to: new Date(),
+                scheduled_to: scheduledTo,
                 rastrear: '',
                 sabores: {
                     create: flavors.map((flavorId: number) => ({
@@ -42,10 +40,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             },
         });
 
-        res.status(201).json(newOrder);
+        return NextResponse.json(newOrder, { status: 201 });
     } catch (error) {
         console.error('Error creating order:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
     } finally {
         await prisma.$disconnect();
     }

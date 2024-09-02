@@ -1,0 +1,19 @@
+.content {
+    width: 100%;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 124px;
+    background-color: white;
+
+    h1 {
+        font-size: 36pt;
+    }
+
+    span {
+        font-size: 18pt;
+    }
+}
