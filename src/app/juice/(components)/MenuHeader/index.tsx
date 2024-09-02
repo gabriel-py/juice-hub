@@ -6,9 +6,9 @@ export default function MenuHeader() {
             <div className={styles.firstColumn}>
                 <h1 className={styles.pageTitle}>Juice Hub</h1>
                 <div className={styles.options}>
-                    <a href=''>Home</a>
-                    <a href=''>Sobre nós</a>
-                    <a href=''>Contato</a>
+                    <a href='/juice/home'>Home</a>
+                    <a href='/juice/home'>Sobre nós</a>
+                    <a href='/juice/home'>Contato</a>
                 </div>
             </div>
             <div className={styles.secondColumn}>

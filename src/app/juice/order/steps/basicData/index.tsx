@@ -6,9 +6,10 @@ import { NewOrderFormData } from '../../page';
 
 export interface BasicDataProps {
     control: Control<NewOrderFormData, any>;
+    onNextStep: () => void;
 }
 
-export default function BasicData({ control }: BasicDataProps) {
+export default function BasicData({ control, onNextStep }: BasicDataProps) {
     return (
         <div className={styles.container}>
             <div className={styles.inputArea}>
@@ -85,7 +86,7 @@ export default function BasicData({ control }: BasicDataProps) {
                     }}
                 />
             </div>
-            <button type='button' className={styles.nextStepButton} style={{ marginTop: "16px" }}>Próximo Passo</button>
+            <button type='button' className={styles.nextStepButton} onClick={onNextStep} style={{ marginTop: "16px" }}>Próximo Passo</button>
         </div>
     );
 }
