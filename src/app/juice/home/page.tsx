@@ -8,7 +8,7 @@ export default function Home() {
                 <span>Faça o primeiro pedido de graça!</span>
                 <h1 className={styles.bannerDescriptionTitle}>O seu suco com o menor preço e mais sabor!</h1>
                 <span>Juice Hub é a primeira loja de sucos online. Um e-juice.</span>
-                <a href='' className={styles.startButton}>Fazer seu pedido <ArrowForwardIcon /></a>
+                <a href='/juice/order' className={styles.startButton}>Fazer seu pedido <ArrowForwardIcon /></a>
             </div>
             <div className={styles.bannerImage}>
                 <img
