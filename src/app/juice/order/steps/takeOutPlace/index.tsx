@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import styles from './styles.module.scss';
 import { Control, Controller } from 'react-hook-form';
 import { NewOrderFormData } from '../../page';
@@ -7,20 +8,31 @@ export interface TakeOutProps {
     control: Control<NewOrderFormData, any>;
 }
 
-const placesOptions = [
-    { id: 1, label: 'Avenida Paulista' },
-    { id: 2, label: 'Mercadão Municipal' },
-    { id: 3, label: 'Parque do Ibirapuera' },
-    { id: 4, label: 'Estação da Luz' },
-    { id: 5, label: 'Rua Augusta' },
-    { id: 6, label: 'Liberdade' },
-    { id: 7, label: 'Pinacoteca de São Paulo' },
-    { id: 8, label: 'MASP' },
-    { id: 9, label: 'Museu do Futebol' },
-    { id: 10, label: 'Shopping Eldorado' },
-];
-
 export default function TakeOut({ control }: TakeOutProps) {
+    const [placesOptions, setPlacesOptions] = useState<{ id: number; label: string }[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchPlaces() {
+            try {
+                const response = await fetch('http://localhost:3000/api/places');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch places');
+                }
+                const data = await response.json();
+                setPlacesOptions(data);
+            } catch (err) {
+                console.error('Erro ao buscar places:', err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchPlaces();
+    }, []);
+
+    if (loading) return <p>Loading...</p>;
+
     return (
         <div className={styles.container}>
             <span className={styles.containerTitle}>Selecione o local em que deseja fazer a retirada do suco: </span>

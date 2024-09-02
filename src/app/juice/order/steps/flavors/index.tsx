@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import styles from './styles.module.scss';
 import { Control, Controller } from 'react-hook-form';
 import { NewOrderFormData } from '../../page';
@@ -8,26 +9,40 @@ export interface FlavorsProps {
     onNextStep: () => void;
 }
 
-// TO DO - read this from api
-const flavorOptions = [
-    { id: 1, label: 'Laranja' },
-    { id: 2, label: 'Morango' },
-    { id: 3, label: 'Manga' },
-    { id: 4, label: 'Abacaxi' },
-    { id: 5, label: 'Acerola' },
-    { id: 6, label: 'Maracujá' },
-    { id: 7, label: 'Guaraná' },
-    { id: 8, label: 'Açai' },
-    { id: 9, label: 'Uva' },
-    { id: 10, label: 'Melancia' },
-];
+interface FlavorOption {
+    id: number;
+    label: string;
+}
 
 export default function Flavors({ control, onNextStep }: FlavorsProps) {
+    const [flavors, setFlavors] = useState<FlavorOption[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchFlavors = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/flavors');
+                const data = await response.json();
+                setFlavors(data);
+            } catch (error) {
+                console.error('Erro ao buscar sabores:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFlavors();
+    }, []);
+
+    if (loading) {
+        return <div>Carregando sabores...</div>;
+    }
+
     return (
         <div className={styles.container}>
             <span className={styles.containerTitle}>Selecione os sabores que deseja dentre as seguintes opções: </span>
             <div className={styles.inputArea}>
-                {flavorOptions.map((flavor) => (
+                {flavors.map((flavor) => (
                     <Controller
                         key={flavor.id}
                         name={`flavors`}
