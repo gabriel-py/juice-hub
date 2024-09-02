@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form';
 import BasicData from './steps/basicData';
 import { Step } from '@mui/material';
 import { useEffect, useState } from 'react';
+import Flavors from './steps/flavors';
+import TakeOut from './steps/takeOutPlace';
 
 export interface NewOrderFormData {
     name: string;
@@ -15,6 +17,7 @@ export interface NewOrderFormData {
 
 interface Step {
     step: number;
+    pageTitle: string;
     component: React.ReactNode;
 }
 
@@ -51,15 +54,18 @@ export default function Order() {
     const steps: Step[] = [
         {
             step: 1,
+            pageTitle: 'Seus dados',
             component: <BasicData control={control} onNextStep={onNextStep} />
         },
         {
             step: 2,
-            component: <BasicData control={control} onNextStep={onNextStep} />
+            pageTitle: 'Sabores',
+            component: <Flavors control={control} onNextStep={onNextStep} />
         },
         {
             step: 3,
-            component: <BasicData control={control} onNextStep={onNextStep} />
+            pageTitle: 'Local de retirada',
+            component: <TakeOut control={control} />
         },
     ]
 
@@ -76,7 +82,7 @@ export default function Order() {
 
     return (
         <div className={styles.content}>
-            <h1 className={styles.pageTitle}>Faça seu pedido</h1>
+            <h1 className={styles.pageTitle}>{currentStep?.pageTitle}</h1>
             <h2>Passo {currentStep?.step} de {steps?.length}</h2>
             <div className={styles.form}>
                 <form>
