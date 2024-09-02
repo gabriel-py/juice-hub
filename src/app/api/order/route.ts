@@ -40,7 +40,30 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        return NextResponse.json(newOrder, { status: 201 });
+        // Send data to external service responsible for the juice machines in a new thread
+        setImmediate(async () => {
+            try {
+                await fetch('https://www.maquina-de-suco.com/api', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        phone_number,
+                        takeOutLocal,
+                        flavors,
+                        scheduledDate,
+                        scheduledTime,
+                    }),
+                });
+            } catch (error) {
+                console.error('Error sending data to external service:', error);
+            }
+        });
+
+        return NextResponse.json({ success: true, order: newOrder }, { status: 201 });
     } catch (error) {
         console.error('Error creating order:', error);
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
