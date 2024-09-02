@@ -87,7 +87,7 @@ export default function Order() {
             <ProgressBar progress={currentStep?.step / steps?.length * 100} />
             <h2>Passo {currentStep?.step} de {steps?.length}</h2>
             <div className={styles.form}>
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     {currentStep?.component}
                 </form>
             </div>
