@@ -6,6 +6,7 @@ import { Step } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Flavors from './steps/flavors';
 import TakeOut from './steps/takeOutPlace';
+import ProgressBar from '../(components)/ProgressBar';
 
 export interface NewOrderFormData {
     name: string;
@@ -36,11 +37,11 @@ export default function Order() {
         },
     });
 
-    const maxPassos = 3;
+    const maxSteps = 3;
 
     const onNextStep = () => {
         const next = currentStepID + 1;
-        if(next > maxPassos){
+        if(next > maxSteps){
             return;
         }
         setCurrentStepID(next);
@@ -83,6 +84,7 @@ export default function Order() {
     return (
         <div className={styles.content}>
             <h1 className={styles.pageTitle}>{currentStep?.pageTitle}</h1>
+            <ProgressBar progress={currentStep?.step / steps?.length * 100} />
             <h2>Passo {currentStep?.step} de {steps?.length}</h2>
             <div className={styles.form}>
                 <form>
