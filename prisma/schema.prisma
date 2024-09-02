@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // ou qualquer outro banco de dados que você esteja usando
+  url      = "file:./dev.db"
+}
+
+model User {
+  id      Int      @id @default(autoincrement())
+  nome    String
+  phone    String
+  email   String   @unique
+  pedidos Pedido[]
+}
+
+model Sabor {
+  id      Int             @id @default(autoincrement())
+  nome    String
+  pedidos PedidoSabor[]
+}
+
+model Local {
+  id       Int      @id @default(autoincrement())
+  endereco String
+  pedidos  Pedido[]
+}
+
+model Pedido {
+  id           Int          @id @default(autoincrement())
+  user_id      Int
+  local_id     Int
+  created_at   DateTime     @default(now())
+  scheduled_to DateTime
+  rastrear     Boolean
+  user         User         @relation(fields: [user_id], references: [id])
+  local        Local        @relation(fields: [local_id], references: [id])
+  sabores      PedidoSabor[]
+}
+
+model PedidoSabor {
+  id        Int    @id @default(autoincrement())
+  pedido_id Int
+  sabor_id  Int
+  pedido    Pedido @relation(fields: [pedido_id], references: [id])
+  sabor     Sabor  @relation(fields: [sabor_id], references: [id])
+
+  @@unique([pedido_id, sabor_id])
+}
